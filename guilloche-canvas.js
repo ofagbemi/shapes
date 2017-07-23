@@ -14,10 +14,35 @@ const ORIGIN = vec3.fromValues(width / 2, height / 2, 0)
 
 const fov = 700
 
+let deltaX = 0
+let deltaY = 0
+
+window.addEventListener('keydown', e => {
+  switch (e.keyCode) {
+    case 38:
+      deltaY--
+      break
+    case 40:
+      deltaY++
+      break
+    case 37:
+      deltaX--
+      break
+    case 39:
+      deltaX++
+      break
+  }
+})
+
+const rotationBuffer = vec3.create()
 function project(buffer, point) {
-  const x = point[0] - ORIGIN[0]
-  const y = point[1] - ORIGIN[1]
-  const z = point[2] - ORIGIN[2]
+  vec3.rotateY(rotationBuffer, point, ORIGIN, rad(deltaX * 4))
+  vec3.rotateX(rotationBuffer, rotationBuffer, ORIGIN, rad(deltaY * 4))
+
+  const x = rotationBuffer[0] - ORIGIN[0]
+  const y = rotationBuffer[1] - ORIGIN[1]
+  const z = rotationBuffer[2] - ORIGIN[2]
+
 
   const scale = fov / (fov + z)
   const x2d = x * scale
@@ -78,6 +103,8 @@ const startPointBuffer = vec3.create()
 const currPointBuffer = vec3.create()
 const prevPointBuffer = vec3.create()
 
+const startProjectionBuffer = vec2.create()
+
 function step() {
   context.clearRect(0, 0, width, height)
   radii.forEach(({ inner, outer }) => {
@@ -85,9 +112,11 @@ function step() {
     const outerRadius = outer + (100 * Math.sin(frameCount / 100)) / 5
 
     getCirclePoint(startPointBuffer, innerRadius, 0, ORIGIN)
+    project(startProjectionBuffer, startPointBuffer)
 
     context.beginPath()
-    context.moveTo(startPointBuffer[0], startPointBuffer[1])
+
+    context.moveTo(startProjectionBuffer[0], startProjectionBuffer[1])
 
     vec3.copy(prevPointBuffer, startPointBuffer)
     for (let i = 1; i < numPoints; i++) {
