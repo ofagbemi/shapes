@@ -11,11 +11,29 @@ document.body.appendChild(canvas)
 const rad = deg => deg * 0.0174533
 
 const ORIGIN = vec3.fromValues(width / 2, height / 2, 0)
+const UP_STROKE = 'rgba(255, 255, 255, 0.4)'
+const UP_BKG = 'linear-gradient(90deg, #39e7af, #06cff5)'
+const DOWN_STROKE = 'rgba(0, 0, 0, 0.4)'
+const DOWN_BKG = 'linear-gradient(90deg, #f45a31, #f4963a)'
 
 const fov = 700
 
 let deltaX = 0
 let deltaY = 0
+
+let upMode = true
+function toggleColors(up) {
+  upMode = up === undefined ? !upMode : up
+  if (upMode) {
+    context.strokeStyle = UP_STROKE
+    document.body.style.background = UP_BKG
+  } else {
+    context.strokeStyle = DOWN_STROKE
+    document.body.style.background = DOWN_BKG
+  }
+}
+
+toggleColors(true)
 
 window.addEventListener('keydown', e => {
   switch (e.keyCode) {
@@ -31,6 +49,8 @@ window.addEventListener('keydown', e => {
     case 39:
       deltaX++
       break
+    case 32:
+      toggleColors()
   }
 })
 
