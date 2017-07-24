@@ -146,7 +146,7 @@ function step() {
         i / numPoints * 360,
         ORIGIN
       )
-      currPointBuffer[2] = 100 * Math.sin(rad((currPointBuffer[1] + currPointBuffer[0] + frameCount) % 360))
+      currPointBuffer[2] = 100 * Math.sin(rad(currPointBuffer[1] + currPointBuffer[0] + frameCount))
       curve(prevPointBuffer, currPointBuffer)
       vec3.copy(prevPointBuffer, currPointBuffer)
     }
